@@ -6,7 +6,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url'; // Import fileURLToPath for resolving __dirname
-
+import blogroutes from './routes/blog.route.js'
 dotenv.config();
 
 const app = express();
@@ -48,6 +48,7 @@ app.get('/', (req, res) => {
 
 // Define Routes
 app.use('/api/users', userRoutes);
+app.use('/api/blogs',blogroutes)
 
 // Start Server
 app.listen(port, () => {
