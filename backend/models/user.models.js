@@ -19,6 +19,10 @@ const userSchema=new mongoose.Schema({
         max:9999999999,
         unique:true
     },
+    token:{
+        type:String,
+        
+    },
     photo:{
        public_id:{
          type:String,
