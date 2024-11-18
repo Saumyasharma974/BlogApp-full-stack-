@@ -5,7 +5,8 @@ import upload from '../middleware/multerConfig.js';
 import { isAdmin, isAuthenticated } from '../middleware/authUser.js';
 
 const router = express.Router();
-router.post('/create',upload.single('blogImage'),isAdmin("admin"),isAuthenticated,createBlog)
+router.post('/create', isAuthenticated, isAdmin("admin"), upload.single('blogImage'), createBlog);
+
 router.delete('/delete/:id',upload.single('blogImage'),isAdmin("admin"),isAuthenticated,deleteBlog)
 router.get('/allBlogs',upload.single('blogImage'),isAuthenticated,getAllBlogs)
 router.get('/single/:id',isAuthenticated,getSingleBlogs)

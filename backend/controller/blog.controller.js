@@ -3,32 +3,44 @@ import { Blog } from "../models/blog.model.js";
 import { v2 as cloudinary } from "cloudinary";
 export const createBlog = async (req, res) => {
   try {
-    if (!req.files || Object.keys(req.files).length === 0) {
+    // Log the uploaded file to debug
+    console.log(req.file);  // req.file will contain the uploaded file's details
+
+    // Ensure file is provided
+    if (!req.file || Object.keys(req.file).length === 0) {
       return res.status(400).json({ message: "Blog Image is required" });
     }
-    const { blogImage } = req.files;
+
+    // Use req.file directly (no need for destructuring)
+    const blogImage = req.file;  // req.file will directly contain the file details
     const allowedFormats = ["image/jpeg", "image/png", "image/webp"];
+
+    // Validate the mimetype of the uploaded image
     if (!allowedFormats.includes(blogImage.mimetype)) {
       return res.status(400).json({
-        message: "Invalid photo format. Only jpg and png are allowed",
+        message: "Invalid photo format. Only jpeg, png, and webp are allowed",
       });
     }
+
     const { title, category, about } = req.body;
+    // Validate the other form fields
     if (!title || !category || !about) {
-      return res
-        .status(400)
-        .json({ message: "title, category & about are required fields" });
+      return res.status(400).json({ message: "Title, category, & about are required fields" });
     }
+
+    // Admin-related details from the request (assuming user is authenticated)
     const adminName = req?.user?.name;
     const adminPhoto = req?.user?.photo?.url;
     const createdBy = req?.user?._id;
 
-    const cloudinaryResponse = await cloudinary.uploader.upload(
-      blogImage.tempFilePath
-    );
+    // Upload image to Cloudinary
+    const cloudinaryResponse = await cloudinary.uploader.upload(blogImage.path);  // Use blogImage.path
     if (!cloudinaryResponse || cloudinaryResponse.error) {
       console.log(cloudinaryResponse.error);
+      return res.status(500).json({ message: "Cloudinary upload failed" });
     }
+
+    // Prepare blog data for the database
     const blogData = {
       title,
       about,
@@ -41,6 +53,8 @@ export const createBlog = async (req, res) => {
         url: cloudinaryResponse.url,
       },
     };
+
+    // Create new blog entry in the database
     const blog = await Blog.create(blogData);
 
     res.status(201).json({
@@ -52,6 +66,7 @@ export const createBlog = async (req, res) => {
     return res.status(500).json({ error: "Internal Server error" });
   }
 };
+
 
 export const deleteBlog = async (req, res) => {
   const { id } = req.params;

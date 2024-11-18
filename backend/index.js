@@ -7,6 +7,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url'; // Import fileURLToPath for resolving __dirname
 import blogroutes from './routes/blog.route.js'
+import cors from 'cors'
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,11 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors({
+    origin:process.env.FRONTEND_URL,
+    credentials: true,
+    methods:['GET','POST','DELETE','PUT']
+}))
 
 
 // Serve static files (uploads directory)
