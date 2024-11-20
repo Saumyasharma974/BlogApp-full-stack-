@@ -5,6 +5,7 @@ import { User } from "../models/user.models.js";
 //Authentication
 export const isAuthenticated = async (req, res, next) => {
   try {
+    console.log(req.cookies)
     const token = req.cookies.jwt;
     console.log("Middleware : ", token);
     if (!token) {
