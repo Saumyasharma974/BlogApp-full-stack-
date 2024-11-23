@@ -3,9 +3,13 @@ import { useAuth } from "../context/AuthProvider";
 import { Link } from "react-router-dom";
 
 function Devotional() {
-  const { blogs } = useAuth();
-  const devotionalBlogs = blogs?.filter((blog) => blog.category === "Devotational");
-  console.log(devotionalBlogs);
+  const { blogs=[], isLoadingBlogs } = useAuth(); // Get blogs and loading state
+  const categoryToFilter = "Devotion"; // Replace with dynamic value
+  const devotionalBlogs = blogs?.filter((blog) => blog.category === categoryToFilter);
+  
+
+  console.log("Devotional Blogs:", devotionalBlogs);
+
   return (
     <div>
       <div className="container mx-auto my-12 p-4">
@@ -14,9 +18,14 @@ function Devotional() {
           The concept of gods varies widely across different cultures,
           religions, and belief systems
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          {devotionalBlogs && devotionalBlogs.length > 0 ? (
-            devotionalBlogs.map((blog, index) => (
+
+        {isLoadingBlogs ? (
+          <div className="flex h-screen items-center justify-center">
+            <p>Loading blogs...</p>
+          </div>
+        ) : devotionalBlogs.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            {devotionalBlogs.map((blog, index) => (
               <Link
                 to={`/blog/${blog._id}`}
                 key={index}
@@ -33,13 +42,13 @@ function Devotional() {
                   <p className="text-sm">{blog?.category}</p>
                 </div>
               </Link>
-            ))
-          ) : (
-            <div className=" flex h-screen items-center justify-center">
-              Loading....
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex h-screen items-center justify-center">
+            <p>No blogs found in the "Devotion" category.</p>
+          </div>
+        )}
       </div>
     </div>
   );

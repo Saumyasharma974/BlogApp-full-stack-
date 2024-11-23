@@ -7,7 +7,7 @@ function Creator() {
   useEffect(() => {
     const fetchAdmins = async () => {
       const { data } = await axios.get(
-        "http://localhost:3000/api/users/admins",
+        "http://localhost:4001/api/users/admins",
         {
           withCredentials: true,
         }
@@ -27,7 +27,7 @@ function Creator() {
               <div key={element._id}>
                 <div className="">
                   <img
-                    src={element?.photo?.url}
+                    src={element.photo.url}
                     alt="blog"
                     className="md:w-56 md:h-56 object-cover border border-black rounded-full items-center "
                   />

@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 
 function Login() {
- // const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
 
   const navigateTo = useNavigate();
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ function Login() {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:3000/api/users/login",
+        "http://localhost:4001/api/users/login",
         { email, password, role },
         {
           withCredentials: true,
@@ -32,8 +32,8 @@ function Login() {
       toast.success(data.message || "User Logined successfully", {
         duration: 3000,
       });
-    //  setProfile(data);
-   //   setIsAuthenticated(true);
+      setProfile(data);
+      setIsAuthenticated(true);
       setEmail("");
       setPassword("");
       setRole("");
@@ -55,7 +55,7 @@ function Login() {
         <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
           <form onSubmit={handleLogin}>
             <div className="font-semibold text-xl items-center text-center">
-              Awesome<span className="text-blue-500">Blog</span>
+              Cilli<span className="text-blue-500">Blog</span>
             </div>
             <h1 className="text-xl font-semibold mb-6">Login</h1>
             <select

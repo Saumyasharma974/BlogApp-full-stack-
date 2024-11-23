@@ -1,53 +1,68 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from "axios";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
-function AuthProvider({ children }) {
-  const [blogs, setBlogs] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const AuthProvider = ({ children }) => {
+  const [blogs, setBlogs] = useState();
+  const [profile, setProfile] = useState();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        // token should be let type variable because its value will change in every login. (in backend also)
+        let token = localStorage.getItem("jwt"); // Retrieve the token directly from the localStorage (Go to login.jsx)
+        console.log(token);
+        if (token) {
+          const { data } = await axios.get(
+            "http://localhost:4001/api/users/my-profile",
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(data.user);
+          setProfile(data.user);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const fetchBlogs = async () => {
       try {
-        const token = localStorage.getItem('jwt'); // Retrieve token from localStorage
-        console.log("Token Retrieved from localStorage:", token); // Debug log
-
-        if (!token) {
-          setError("No token found. Please log in.");
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get("http://localhost:3000/api/blogs/allBlogs", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add Authorization header
-           
-            
-          },
-          withCredentials: true,  
-        });
-        console.log("API Response:", response); // Debug log
-        setBlogs(response.data); // Save blogs data
-      } catch (err) {
-        console.error("API Call Error:", err.response || err.message || err); // Debug log
-        setError(err.response?.data?.message || "Failed to fetch blogs");
-      } finally {
-        setLoading(false); // Ensure loading stops
+        const { data } = await axios.get(
+          "http://localhost:4001/api/blogs/allBlogs",
+          { withCredentials: true }
+        );
+        console.log(data);
+        setBlogs(data);
+      } catch (error) {
+        console.log(error);
       }
     };
 
     fetchBlogs();
+    fetchProfile();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ blogs, loading, error }}>
+    <AuthContext.Provider
+      value={{
+        blogs,
+        profile,
+        setProfile,
+        isAuthenticated,
+        setIsAuthenticated,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export default AuthProvider;
+};
 
 export const useAuth = () => useContext(AuthContext);

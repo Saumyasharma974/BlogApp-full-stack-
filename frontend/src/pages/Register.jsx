@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 
 function Register() {
- // const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
 
   const navigateTo = useNavigate();
 
@@ -41,7 +41,7 @@ function Register() {
     formData.append("photo", photo);
     try {
       const { data } = await axios.post(
-        "http://localhost:3000/api/users/register",
+        "http://localhost:4001/api/users/register",
         formData,
         {
           withCredentials: true,
@@ -51,11 +51,10 @@ function Register() {
         }
       );
       console.log(data);
-      
-      // localStorage.setItem("jwt", data.token); // storing token in localStorage so that if user refreshed the page it will not redirect again in login
-       toast.success(data.message || "User registered successfully");
-    //  setProfile(data);
-    //  setIsAuthenticated(true);
+      localStorage.setItem("jwt", data.token); // storing token in localStorage so that if user refreshed the page it will not redirect again in login
+      toast.success(data.message || "User registered successfully");
+      setProfile(data);
+      setIsAuthenticated(true);
       setName("");
       setEmail("");
       setPhone("");
@@ -79,7 +78,7 @@ function Register() {
         <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
           <form onSubmit={handleRegister}>
             <div className="font-semibold text-xl items-center text-center">
-              Awesome<span className="text-blue-500">Blog</span>
+              Cilli<span className="text-blue-500">Blog</span>
             </div>
             <h1 className="text-xl font-semibold mb-6">Register</h1>
             <select
